@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ----------------------------------------------------------------------------
+// MODELLER (VERİTABANI TABLOLARI)
+// ----------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  tier      String   @default("FREE") // FREE veya PRO üyelik tipi
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // İlişkiler
+  items     UserItem[]
+}
+
+model Item {
+  id         String   @id @default(uuid())
+  type       String   // MOVIE, TV, BOOK, ANIME
+  externalId String   // Dış sağlayıcı (TMDB vb.) ID'si
+  metadata   String   // JSON verisi (SQLite native JSON desteklemediği için string olarak tutulacak)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // İlişkiler
+  users      UserItem[]
+
+  // Aynı tipte aynı externalId'ye sahip iki içerik eklenemez
+  @@unique([type, externalId])
+}
+
+model UserItem {
+  id        String   @id @default(uuid())
+  userId    String
+  itemId    String
+  status    String   // COMPLETED, IN_PROGRESS, PLAN_TO_WATCH, vb.
+  progress  Int      @default(0)
+  rating    Int?     // Kullanıcının verdiği puan (1-10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // İlişkiler
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  // Bir kullanıcı bir içeriği sadece bir kere listesine ekleyebilir
+  @@unique([userId, itemId])
+}
