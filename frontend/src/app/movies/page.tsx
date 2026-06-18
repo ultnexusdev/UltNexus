@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CategoryPageLayout from "@/components/CategoryPageLayout";
-import { movies, categoryMeta } from "@/lib/mockData";
+import { categoryMeta } from "@/lib/mockData";
+import { fetchMovies } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Movies — UltNexus",
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
     "Discover, track, and rate movies. From blockbusters to hidden gems, find your next favorite film on UltNexus.",
 };
 
-export default function MoviesPage() {
+export default async function MoviesPage() {
+  const movies = await fetchMovies();
+
   return (
     <CategoryPageLayout
       title="Movies"

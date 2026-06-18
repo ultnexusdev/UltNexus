@@ -2,14 +2,8 @@ import { ListChecks, Star, Compass, Share2 } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import CategorySection from "@/components/CategorySection";
 import FeatureCard from "@/components/FeatureCard";
-import {
-  movies,
-  series,
-  animes,
-  books,
-  trendingContent,
-  categoryMeta,
-} from "@/lib/mockData";
+import { categoryMeta } from "@/lib/mockData";
+import { fetchTrending, fetchMovies, fetchSeries, fetchAnimes, fetchBooks } from "@/lib/api";
 import Link from "next/link";
 
 const features = [
@@ -39,7 +33,15 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [trendingContent, movies, series, animes, books] = await Promise.all([
+    fetchTrending(),
+    fetchMovies(),
+    fetchSeries(),
+    fetchAnimes(),
+    fetchBooks(),
+  ]);
+
   return (
     <>
       {/* Hero */}

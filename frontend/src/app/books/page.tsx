@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import CategoryPageLayout from "@/components/CategoryPageLayout";
-import { books, categoryMeta } from "@/lib/mockData";
+import { categoryMeta } from "@/lib/mockData";
+import { fetchBooks } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Books — UltNexus",
   description:
-    "Track your reading list, discover new books, and rate every title you finish. UltNexus is your digital bookshelf.",
+    "Log your reading journey. Discover new books, write reviews, and build your digital library.",
 };
 
-export default function BooksPage() {
+export default async function BooksPage() {
+  const books = await fetchBooks();
+
   return (
     <CategoryPageLayout
       title="Books"
-      description="Your digital bookshelf — discover, track, and rate every title you read."
+      description="Log your reading journey. Discover new books, write reviews, and build your digital library."
       accentColor={categoryMeta.BOOK.color}
       items={books}
     />

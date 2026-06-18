@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import CategoryPageLayout from "@/components/CategoryPageLayout";
-import { animes, categoryMeta } from "@/lib/mockData";
+import { categoryMeta } from "@/lib/mockData";
+import { fetchAnimes } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Animes — UltNexus",
   description:
-    "Explore and track your anime journey. From shonen to slice of life, rate and organize every title on UltNexus.",
+    "Explore the world of anime. From classics to currently airing seasonal hits.",
 };
 
-export default function AnimesPage() {
+export default async function AnimesPage() {
+  const animes = await fetchAnimes();
+
   return (
     <CategoryPageLayout
       title="Animes"
-      description="From shonen epics to slice of life — explore, rate, and track your anime journey."
+      description="Explore the world of anime. From classics to currently airing seasonal hits."
       accentColor={categoryMeta.ANIME.color}
       items={animes}
     />

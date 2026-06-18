@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import CategoryPageLayout from "@/components/CategoryPageLayout";
-import { series, categoryMeta } from "@/lib/mockData";
+import { categoryMeta } from "@/lib/mockData";
+import { fetchSeries } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Series — UltNexus",
   description:
-    "Track your favorite TV series, discover new shows, and never lose track of where you left off. UltNexus keeps your watchlist organized.",
+    "Track your favorite TV series. Log episodes, rate seasons, and never lose your place again.",
 };
 
-export default function SeriesPage() {
+export default async function SeriesPage() {
+  const series = await fetchSeries();
+
   return (
     <CategoryPageLayout
-      title="Series"
-      description="Track your binge sessions, discover new shows, and never forget where you left off."
+      title="TV Series"
+      description="Track your favorite shows, log episodes, and never lose your place again."
       accentColor={categoryMeta.SERIES.color}
       items={series}
     />
