@@ -1,0 +1,1 @@
+docker exec coolify-db psql -U coolify -d coolify -c "UPDATE environment_variables SET value='https://api.ultnexus.com/content', real_value='https://api.ultnexus.com/content', is_build_time=true WHERE key='NEXT_PUBLIC_API_URL';"
