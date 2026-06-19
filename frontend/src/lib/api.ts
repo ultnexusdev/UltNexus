@@ -1,6 +1,6 @@
 import type { ContentItem } from "./mockData";
 
-const API_BASE = "http://localhost:4000/content";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/content";
 
 export async function fetchTrending(): Promise<ContentItem[]> {
   try {
