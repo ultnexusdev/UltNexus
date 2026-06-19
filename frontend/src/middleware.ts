@@ -14,7 +14,7 @@ export function middleware(req: NextRequest) {
     // Bunları istersen sonradan değiştirebiliriz.
     const [user, pwd] = atob(authValue).split(':');
 
-    if (user === 'admin' && pwd === 'ultnexus') {
+    if (user === 'durular' && pwd === 'defne') {
       return NextResponse.next();
     }
   }
