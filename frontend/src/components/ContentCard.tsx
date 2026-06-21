@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import Link from "next/link";
 import type { ContentItem } from "@/lib/mockData";
 
 interface ContentCardProps {
@@ -8,8 +9,9 @@ interface ContentCardProps {
 
 export default function ContentCard({ item, index = 0 }: ContentCardProps) {
   return (
-    <div
-      className={`group relative rounded-2xl overflow-hidden bg-[var(--surface)] border border-white/5 card-hover animate-fade-in-up`}
+    <Link
+      href={`/${item.type.toLowerCase()}s/${item.id}`}
+      className={`group relative rounded-2xl overflow-hidden bg-[var(--surface)] border border-white/5 card-hover animate-fade-in-up block`}
       style={{ animationDelay: `${index * 0.08}s` }}
     >
       {/* Poster */}
@@ -60,6 +62,6 @@ export default function ContentCard({ item, index = 0 }: ContentCardProps) {
 
       {/* Bottom glow on hover */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--accent-primary)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-    </div>
+    </Link>
   );
 }

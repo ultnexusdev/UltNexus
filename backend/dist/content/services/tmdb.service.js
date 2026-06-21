@@ -58,6 +58,20 @@ let TmdbService = TmdbService_1 = class TmdbService {
             return [];
         }
     }
+    async searchMovies(query, page = 1) {
+        try {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=tr-TR&page=${page}&include_adult=false`, {
+                headers: this.headers,
+            }).pipe((0, rxjs_1.catchError)((error) => {
+                this.logger.error(`Error searching movies: ${error.message}`);
+                throw 'An error happened!';
+            })));
+            return data.results || [];
+        }
+        catch (e) {
+            return [];
+        }
+    }
 };
 exports.TmdbService = TmdbService;
 exports.TmdbService = TmdbService = TmdbService_1 = __decorate([

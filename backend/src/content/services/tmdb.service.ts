@@ -55,4 +55,23 @@ export class TmdbService {
       return [];
     }
   }
+
+  async searchMovies(query: string, page = 1) {
+    try {
+      // language=tr-TR helps TMDB match Turkish titles to original titles
+      const { data } = await firstValueFrom(
+        this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=tr-TR&page=${page}&include_adult=false`, {
+          headers: this.headers,
+        }).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(`Error searching movies: ${error.message}`);
+            throw 'An error happened!';
+          }),
+        ),
+      );
+      return data.results || [];
+    } catch (e) {
+      return [];
+    }
+  }
 }

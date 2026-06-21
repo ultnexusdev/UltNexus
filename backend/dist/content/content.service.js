@@ -130,6 +130,20 @@ let ContentService = class ContentService {
         await this.cacheManager.set(cacheKey, mapped, 3600000);
         return mapped;
     }
+    async search(query, page = 1) {
+        const data = await this.tmdbService.searchMovies(query, page);
+        const mapped = data.map((item) => ({
+            id: `m_${item.id}`,
+            title: item.title,
+            year: item.release_date ? parseInt(item.release_date.split('-')[0]) : null,
+            rating: item.vote_average,
+            genre: 'Movie',
+            poster: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '',
+            description: item.overview,
+            type: 'MOVIE',
+        }));
+        return mapped;
+    }
 };
 exports.ContentService = ContentService;
 exports.ContentService = ContentService = __decorate([

@@ -7,4 +7,5 @@ export declare class ContentController {
     getSeries(): Promise<any>;
     getAnimes(): Promise<any>;
     getBooks(): Promise<any>;
+    search(query: string, page?: string): Promise<any>;
 }

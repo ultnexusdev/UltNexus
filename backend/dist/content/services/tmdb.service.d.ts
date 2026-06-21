@@ -7,4 +7,5 @@ export declare class TmdbService {
     constructor(httpService: HttpService);
     getTrending(type?: 'movie' | 'tv', timeWindow?: 'day' | 'week'): Promise<any>;
     getPopular(type?: 'movie' | 'tv', page?: number): Promise<any>;
+    searchMovies(query: string, page?: number): Promise<any>;
 }

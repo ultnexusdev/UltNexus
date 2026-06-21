@@ -13,4 +13,5 @@ export declare class ContentService {
     getAnimes(): Promise<any>;
     getBooks(): Promise<any>;
     getTrending(): Promise<{}>;
+    search(query: string, page?: number): Promise<any>;
 }

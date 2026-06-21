@@ -56,3 +56,15 @@ export async function fetchBooks(): Promise<ContentItem[]> {
     return [];
   }
 }
+
+export async function searchContent(query: string, page = 1): Promise<ContentItem[]> {
+  if (!query) return [];
+  try {
+    const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&page=${page}`);
+    if (!res.ok) throw new Error("Failed to search");
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}

@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentController = void 0;
 const common_1 = require("@nestjs/common");
@@ -31,6 +34,11 @@ let ContentController = class ContentController {
     }
     async getBooks() {
         return this.contentService.getBooks();
+    }
+    async search(query, page) {
+        if (!query)
+            return [];
+        return this.contentService.search(query, page ? parseInt(page) : 1);
     }
 };
 exports.ContentController = ContentController;
@@ -64,6 +72,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ContentController.prototype, "getBooks", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('page')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "search", null);
 exports.ContentController = ContentController = __decorate([
     (0, common_1.Controller)('content'),
     __metadata("design:paramtypes", [content_service_1.ContentService])
