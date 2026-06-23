@@ -13,5 +13,7 @@ export declare class ContentService {
     getAnimes(): Promise<any>;
     getBooks(): Promise<any>;
     getTrending(): Promise<{}>;
+    getMovieById(id: string): Promise<{} | null>;
+    getPersonById(id: string): Promise<{} | null>;
     search(query: string, page?: number): Promise<any>;
 }

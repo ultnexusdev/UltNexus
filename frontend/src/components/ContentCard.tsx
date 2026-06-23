@@ -16,12 +16,18 @@ export default function ContentCard({ item, index = 0 }: ContentCardProps) {
     >
       {/* Poster */}
       <div className="relative aspect-[2/3] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={item.poster}
-          alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
+        {item.poster ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={item.poster}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/30 text-xs">
+            No Image
+          </div>
+        )}
 
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

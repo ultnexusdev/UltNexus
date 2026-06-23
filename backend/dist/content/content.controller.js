@@ -26,6 +26,12 @@ let ContentController = class ContentController {
     async getMovies() {
         return this.contentService.getMovies();
     }
+    async getMovie(id) {
+        return this.contentService.getMovieById(id);
+    }
+    async getPerson(id) {
+        return this.contentService.getPersonById(id);
+    }
     async getSeries() {
         return this.contentService.getSeries();
     }
@@ -54,6 +60,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ContentController.prototype, "getMovies", null);
+__decorate([
+    (0, common_1.Get)('movies/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "getMovie", null);
+__decorate([
+    (0, common_1.Get)('person/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "getPerson", null);
 __decorate([
     (0, common_1.Get)('series'),
     __metadata("design:type", Function),

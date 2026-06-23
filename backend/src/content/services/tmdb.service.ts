@@ -56,11 +56,65 @@ export class TmdbService {
     }
   }
 
+  async getMovieDetails(id: number) {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get(`${this.baseUrl}/movie/${id}?language=en-US&append_to_response=credits,videos,watch/providers,release_dates`, {
+          headers: this.headers,
+        }).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(`Error fetching movie details: ${error.message}`);
+            throw 'An error happened!';
+          }),
+        ),
+      );
+      return data || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getPersonDetails(id: number) {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get(`${this.baseUrl}/person/${id}?language=en-US`, {
+          headers: this.headers,
+        }).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(`Error fetching person details: ${error.message}`);
+            throw 'An error happened!';
+          }),
+        ),
+      );
+      return data || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getPersonMovieCredits(id: number) {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get(`${this.baseUrl}/person/${id}/movie_credits?language=en-US`, {
+          headers: this.headers,
+        }).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(`Error fetching person movie credits: ${error.message}`);
+            throw 'An error happened!';
+          }),
+        ),
+      );
+      return data || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   async searchMovies(query: string, page = 1) {
     try {
       // language=tr-TR helps TMDB match Turkish titles to original titles
       const { data } = await firstValueFrom(
-        this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=tr-TR&page=${page}&include_adult=false`, {
+        this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}&include_adult=false`, {
           headers: this.headers,
         }).pipe(
           catchError((error: AxiosError) => {

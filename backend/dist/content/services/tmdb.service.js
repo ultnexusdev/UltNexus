@@ -58,9 +58,51 @@ let TmdbService = TmdbService_1 = class TmdbService {
             return [];
         }
     }
+    async getMovieDetails(id) {
+        try {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/movie/${id}?language=en-US&append_to_response=credits,videos,watch/providers,release_dates`, {
+                headers: this.headers,
+            }).pipe((0, rxjs_1.catchError)((error) => {
+                this.logger.error(`Error fetching movie details: ${error.message}`);
+                throw 'An error happened!';
+            })));
+            return data || null;
+        }
+        catch (e) {
+            return null;
+        }
+    }
+    async getPersonDetails(id) {
+        try {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/person/${id}?language=en-US`, {
+                headers: this.headers,
+            }).pipe((0, rxjs_1.catchError)((error) => {
+                this.logger.error(`Error fetching person details: ${error.message}`);
+                throw 'An error happened!';
+            })));
+            return data || null;
+        }
+        catch (e) {
+            return null;
+        }
+    }
+    async getPersonMovieCredits(id) {
+        try {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/person/${id}/movie_credits?language=en-US`, {
+                headers: this.headers,
+            }).pipe((0, rxjs_1.catchError)((error) => {
+                this.logger.error(`Error fetching person movie credits: ${error.message}`);
+                throw 'An error happened!';
+            })));
+            return data || null;
+        }
+        catch (e) {
+            return null;
+        }
+    }
     async searchMovies(query, page = 1) {
         try {
-            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=tr-TR&page=${page}&include_adult=false`, {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}&include_adult=false`, {
                 headers: this.headers,
             }).pipe((0, rxjs_1.catchError)((error) => {
                 this.logger.error(`Error searching movies: ${error.message}`);
