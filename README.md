@@ -60,6 +60,8 @@ External API data (film details, posters, trailers) is **never mixed** with user
 ### 2. Fully Dynamic — No Hardcoded Text
 All user-facing text (button labels, headings, descriptions) will be managed through a **centralized translation system** (`i18n`). Nothing is hardcoded into components.
 
+### 3. Full Mobile Responsiveness (Mobile-First Approach):** The platform is built to provide a seamless and adaptive user experience across all mobile devices. This principle applies strictly to the current state and all future updates; every UI component must remain fully responsive and visually optimized for mobile viewports.
+
 ```
 ❌  <button>Save</button>
 ✅  <button>{t("save_button")}</button>
