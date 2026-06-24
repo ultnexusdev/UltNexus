@@ -10,4 +10,19 @@ export declare class ContentController {
     getAnimes(): Promise<any>;
     getBooks(): Promise<any>;
     search(query: string, page?: string): Promise<any>;
+    getStats(type: string, id: string): Promise<{
+        watched: number;
+        likes: number;
+        averageRating: number;
+    }>;
+    interact(req: any, body: {
+        itemId: string;
+        type: string;
+        action: 'watch' | 'like' | 'rate';
+        payload?: any;
+    }): Promise<{
+        status: string;
+        isLiked: boolean;
+        rating: number | null;
+    }>;
 }

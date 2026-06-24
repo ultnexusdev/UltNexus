@@ -14,8 +14,11 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
-  email     String   @unique
-  tier      String   @default("FREE") // FREE veya PRO üyelik tipi
+  email             String   @unique
+  password          String
+  isVerified        Boolean  @default(false)
+  verificationToken String?
+  tier              String   @default("FREE") // FREE veya PRO üyelik tipi
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -45,6 +48,7 @@ model UserItem {
   status    String   // COMPLETED, IN_PROGRESS, PLAN_TO_WATCH, vb.
   progress  Int      @default(0)
   rating    Int?     // Kullanıcının verdiği puan (1-10)
+  isLiked   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

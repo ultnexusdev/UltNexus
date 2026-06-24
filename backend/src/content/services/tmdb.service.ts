@@ -123,7 +123,9 @@ export class TmdbService {
           }),
         ),
       );
-      return data.results || [];
+      const results = data.results || [];
+      // Sort by popularity descending so exact generic words (like 'lotr') match the most popular movie
+      return results.sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0));
     } catch (e) {
       return [];
     }

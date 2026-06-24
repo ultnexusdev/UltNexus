@@ -36,7 +36,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
         <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10 animate-in fade-in slide-in-from-top-2">
           {activeTab === "CAST" && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {movie.cast.length > 0 ? (
+              {movie.cast?.length > 0 ? (
                 movie.cast.map((person) => (
                   <Link key={person.id} href={`/person/${person.id}`} className="group flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 shrink-0">
@@ -60,7 +60,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
           {activeTab === "CREW" && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {movie.crew.length > 0 ? (
+              {movie.crew?.length > 0 ? (
                 movie.crew.map((person, idx) => (
                   <Link key={`${person.id}-${idx}`} href={`/person/${person.id}`} className="group flex items-center gap-3">
                     <div className="flex flex-col">
@@ -80,19 +80,19 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               <div>
                 <h4 className="text-white/70 text-xs uppercase tracking-wider mb-2">Studios</h4>
                 <div className="flex flex-wrap gap-2">
-                  {movie.studios.length > 0 ? movie.studios.map((s, i) => <span key={i} className="text-sm text-white">{s}</span>) : <span className="text-white/50">-</span>}
+                  {movie.studios?.length > 0 ? movie.studios.map((s, i) => <span key={i} className="text-sm text-white">{s}</span>) : <span className="text-white/50">-</span>}
                 </div>
               </div>
               <div>
                 <h4 className="text-white/70 text-xs uppercase tracking-wider mb-2">Countries</h4>
                 <div className="flex flex-wrap gap-2">
-                  {movie.countries.length > 0 ? movie.countries.map((c, i) => <span key={i} className="text-sm text-white">{c}</span>) : <span className="text-white/50">-</span>}
+                  {movie.countries?.length > 0 ? movie.countries.map((c, i) => <span key={i} className="text-sm text-white">{c}</span>) : <span className="text-white/50">-</span>}
                 </div>
               </div>
               <div>
                 <h4 className="text-white/70 text-xs uppercase tracking-wider mb-2">Languages</h4>
                 <div className="flex flex-wrap gap-2">
-                  {movie.languages.length > 0 ? movie.languages.map((l, i) => <span key={i} className="text-sm text-white">{l}</span>) : <span className="text-white/50">-</span>}
+                  {movie.languages?.length > 0 ? movie.languages.map((l, i) => <span key={i} className="text-sm text-white">{l}</span>) : <span className="text-white/50">-</span>}
                 </div>
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
           {activeTab === "GENRES" && (
             <div className="flex flex-wrap gap-2">
-              {movie.genres.length > 0 ? movie.genres.map((g, i) => (
+              {movie.genres?.length > 0 ? movie.genres.map((g, i) => (
                 <Link key={i} href={`/search?genre=${encodeURIComponent(g)}`} className="px-3 py-1 bg-white/10 rounded-full text-sm text-white hover:bg-white/20 transition-colors">{g}</Link>
               )) : <span className="text-white/50">No genres listed.</span>}
             </div>
@@ -108,7 +108,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
           {activeTab === "WHERE TO WATCH" && (
             <div className="flex flex-col gap-6">
-              {movie.videos.length > 0 && (
+              {movie.videos?.length > 0 && (
                 <div>
                   <h4 className="text-white/70 text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
                     <PlayCircle className="w-4 h-4" /> Trailer
@@ -127,7 +127,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               <div>
                 <h4 className="text-white/70 text-xs uppercase tracking-wider mb-3">Streaming Platforms (US)</h4>
                 <div className="flex flex-wrap gap-4">
-                  {movie.watchProviders.length > 0 ? (
+                  {movie.watchProviders?.length > 0 ? (
                     movie.watchProviders.map((p) => (
                       <div key={p.provider_id} className="flex flex-col items-center gap-2">
                         <img src={p.logo_path} alt={p.provider_name} className="w-12 h-12 rounded-xl shadow-lg" />

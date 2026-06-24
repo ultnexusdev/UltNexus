@@ -15,6 +15,8 @@ const axios_1 = require("@nestjs/axios");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const content_module_1 = require("./content/content.module");
 const config_1 = require("@nestjs/config");
+const mail_module_1 = require("./mail/mail.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +33,8 @@ exports.AppModule = AppModule = __decorate([
                 ttl: 3600000,
             }),
             content_module_1.ContentModule,
+            mail_module_1.MailModule,
+            auth_module_1.AuthModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

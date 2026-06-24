@@ -1,5 +1,5 @@
 import { ListChecks, Star, Compass, Share2 } from "lucide-react";
-import HeroSection from "@/components/HeroSection";
+import HomeShowcase from "@/components/HomeShowcase";
 import CategorySection from "@/components/CategorySection";
 import FeatureCard from "@/components/FeatureCard";
 import { categoryMeta } from "@/lib/mockData";
@@ -44,8 +44,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <HeroSection />
+      {/* Hero Showcase */}
+      <HomeShowcase movies={movies} series={series} animes={animes} books={books} />
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

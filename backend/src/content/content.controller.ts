@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { ContentService } from './content.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('content')
 export class ContentController {
@@ -44,5 +45,17 @@ export class ContentController {
   async search(@Query('q') query: string, @Query('page') page?: string) {
     if (!query) return [];
     return this.contentService.search(query, page ? parseInt(page) : 1);
+  }
+
+  @Get(':type/:id/stats')
+  async getStats(@Param('type') type: string, @Param('id') id: string) {
+    return this.contentService.getItemStats(id, type.toUpperCase());
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('interact')
+  async interact(@Req() req: any, @Body() body: { itemId: string, type: string, action: 'watch' | 'like' | 'rate', payload?: any }) {
+    const userId = req.user.id;
+    return this.contentService.interact(userId, body.itemId, body.type, body.action, body.payload);
   }
 }

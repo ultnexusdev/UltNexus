@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentModule = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
+const prisma_module_1 = require("../prisma/prisma.module");
 const content_controller_1 = require("./content.controller");
 const content_service_1 = require("./content.service");
 const tmdb_service_1 = require("./services/tmdb.service");
@@ -19,7 +20,7 @@ let ContentModule = class ContentModule {
 exports.ContentModule = ContentModule;
 exports.ContentModule = ContentModule = __decorate([
     (0, common_1.Module)({
-        imports: [axios_1.HttpModule],
+        imports: [axios_1.HttpModule, prisma_module_1.PrismaModule],
         controllers: [content_controller_1.ContentController],
         providers: [
             content_service_1.ContentService,

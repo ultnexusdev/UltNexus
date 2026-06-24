@@ -16,6 +16,14 @@ import {
 import { searchContent } from "@/lib/api";
 import type { ContentItem } from "@/lib/mockData";
 
+// Mock i18n function
+const t = (key: string) => {
+  const translations: Record<string, string> = {
+    "filter.search_placeholder": "Search...",
+  };
+  return translations[key] || key;
+};
+
 interface FilterBarProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
@@ -106,7 +114,7 @@ export default function FilterBar({
 
     return (
       <div className="relative group/dropdown">
-        <button className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[var(--foreground-muted)] hover:text-white transition-colors uppercase tracking-wide border-r border-white/5 last:border-r-0">
+        <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs font-semibold text-[var(--foreground-muted)] hover:text-white hover:bg-white/10 hover:border-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300 uppercase tracking-wide">
           <span className="truncate max-w-[120px]">{displayLabel}</span>
           <ChevronDown size={14} className="group-hover/dropdown:rotate-180 transition-transform duration-200" />
         </button>
@@ -138,7 +146,7 @@ export default function FilterBar({
     const activeSort = sortOptions.find((o) => o.value === selectedSort);
     return (
       <div className="relative group/dropdown">
-        <button className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[var(--foreground-muted)] hover:text-white transition-colors uppercase tracking-wide border-r border-white/5">
+        <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs font-semibold text-[var(--foreground-muted)] hover:text-white hover:bg-white/10 hover:border-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300 uppercase tracking-wide">
           <span className="truncate max-w-[120px]">
             {activeSort ? activeSort.label.split(" (")[0] : "SORT BY"}
           </span>
@@ -169,10 +177,10 @@ export default function FilterBar({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between bg-[#14181c] border-y border-[#2c3440] px-4 py-2 mb-8 gap-4">
+    <div className="flex flex-col sm:flex-row items-center justify-between bg-transparent border-b border-white/5 px-4 py-4 mb-8 gap-4">
       <div className="flex items-center">
-        <span className="text-xs text-[#89a] font-semibold tracking-wider mr-4">BROWSE BY</span>
-        <div className="flex items-center bg-[#2c3440] rounded border border-[#445566]">
+        <span className="text-xs text-[var(--foreground-muted)] font-semibold tracking-wider mr-4">BROWSE BY</span>
+        <div className="flex items-center gap-2 flex-wrap">
           <FilterDropdown category={yearsFilter} selectedValue={selectedYear} onSelect={setSelectedYear} />
           <FilterDropdown category={ratingFilter} selectedValue={selectedRating} onSelect={setSelectedRating} />
           <SortDropdown />
@@ -183,7 +191,7 @@ export default function FilterBar({
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-xs text-[#89a] font-semibold tracking-wider">FIND A FILM</span>
+        <span className="text-xs text-[var(--foreground-muted)] font-semibold tracking-wider uppercase hidden md:inline-block">Find A Film</span>
         <div className="relative" ref={searchContainerRef}>
           <input
             type="text"
@@ -193,8 +201,8 @@ export default function FilterBar({
             onFocus={() => {
               if (searchQuery.length >= 2) setShowDropdown(true);
             }}
-            placeholder="Search TMDB..."
-            className="w-56 bg-[#2c3440] border border-[#445566] rounded px-3 py-1.5 text-sm text-white placeholder-[#89a] focus:outline-none focus:border-[#678] transition-colors"
+            placeholder={t("filter.search_placeholder")}
+            className="w-64 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[var(--foreground-muted)] focus:outline-none focus:border-[var(--accent-primary)] focus:bg-white/10 focus:shadow-[0_0_20px_var(--accent-primary-transparent)] transition-all duration-300"
           />
           {isSearching ? (
             <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#89a] animate-spin" />

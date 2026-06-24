@@ -20,15 +20,9 @@
 ---
 
 ## 📖 About
+UltNexus is a modern media tracking and community platform where users can discover, rate, review, and organize their favorite entertainment content across four main categories: Movies, Series, Animes, and Books.
 
-UltNexus is a modern media tracking and community platform where users can discover, rate, review, and organize their favorite entertainment content across four main categories:
-
-- 🎬 **Movies**
-- 📺 **Series**
-- ✨ **Animes**
-- 📚 **Books**
-
-The platform is designed with a **global English-first** interface, but users can write reviews and comments in **any language** — there are no character restrictions. The architecture is built to be **modular, scalable, and future-proof**, allowing new features, categories, languages, and themes to be added without rewriting existing code.
+*Note: For AI Agent instructions and strict coding rules, please refer to `.agents/AGENTS.md`.*
 
 ---
 

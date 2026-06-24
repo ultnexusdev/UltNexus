@@ -16,18 +16,19 @@ export default async function MovieDetailPage({ params }: { params: { id: string
 
   return (
     <div className="min-h-screen pt-20 pb-20">
-      {/* Backdrop Header */}
-      <div className="relative h-[50vh] w-full">
+      {/* Backdrop Header (Letterboxd Style) */}
+      <div className="relative h-[60vh] w-full">
         {movie.backdrop ? (
           <img
             src={movie.backdrop}
             alt={`${movie.title} backdrop`}
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-60"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/80 to-transparent" />
+        {/* Linear gradient fade from top (clear) to bottom (background color) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--background)]/60 to-[var(--background)]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">

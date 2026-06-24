@@ -108,7 +108,8 @@ let TmdbService = TmdbService_1 = class TmdbService {
                 this.logger.error(`Error searching movies: ${error.message}`);
                 throw 'An error happened!';
             })));
-            return data.results || [];
+            const results = data.results || [];
+            return results.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
         }
         catch (e) {
             return [];

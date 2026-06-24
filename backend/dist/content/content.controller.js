@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentController = void 0;
 const common_1 = require("@nestjs/common");
 const content_service_1 = require("./content.service");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let ContentController = class ContentController {
     contentService;
     constructor(contentService) {
@@ -45,6 +46,13 @@ let ContentController = class ContentController {
         if (!query)
             return [];
         return this.contentService.search(query, page ? parseInt(page) : 1);
+    }
+    async getStats(type, id) {
+        return this.contentService.getItemStats(id, type.toUpperCase());
+    }
+    async interact(req, body) {
+        const userId = req.user.id;
+        return this.contentService.interact(userId, body.itemId, body.type, body.action, body.payload);
     }
 };
 exports.ContentController = ContentController;
@@ -100,6 +108,23 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], ContentController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(':type/:id/stats'),
+    __param(0, (0, common_1.Param)('type')),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "getStats", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('interact'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "interact", null);
 exports.ContentController = ContentController = __decorate([
     (0, common_1.Controller)('content'),
     __metadata("design:paramtypes", [content_service_1.ContentService])

@@ -1,6 +1,6 @@
 import type { ContentItem } from "./mockData";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/content";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/content";
 
 export interface MovieDetail extends ContentItem {
   backdrop: string;
@@ -17,6 +17,7 @@ export interface MovieDetail extends ContentItem {
   videos: { key: string; name: string; site: string; type: string }[];
   watchProviders: { provider_id: number; provider_name: string; logo_path: string }[];
   stats: { views: number; likes: number; rank: number };
+  imdbId?: string | null;
 }
 
 export interface PersonDetail {
@@ -52,7 +53,7 @@ export async function fetchMovies(): Promise<ContentItem[]> {
 
 export async function fetchMovieById(id: string): Promise<MovieDetail | null> {
   try {
-    const res = await fetch(`${API_BASE}/movies/${id}`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_BASE}/movies/${id}`, { next: { revalidate: 0 } });
     if (!res.ok) {
       if (res.status === 404) return null;
       throw new Error("Failed to fetch movie details");

@@ -4,6 +4,7 @@ import type { Cache } from 'cache-manager';
 import { TmdbService } from './services/tmdb.service';
 import { AnilistService } from './services/anilist.service';
 import { GoogleBooksService } from './services/google-books.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ContentService {
@@ -12,7 +13,69 @@ export class ContentService {
     private readonly tmdbService: TmdbService,
     private readonly anilistService: AnilistService,
     private readonly googleBooksService: GoogleBooksService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  async interact(userId: string, itemId: string, type: string, action: 'watch' | 'like' | 'rate', payload?: any) {
+    await this.prisma.item.upsert({
+      where: { type_externalId: { type, externalId: itemId } },
+      update: {},
+      create: { type, externalId: itemId, metadata: '{}' },
+    });
+    const itemRecord = await this.prisma.item.findUnique({
+      where: { type_externalId: { type, externalId: itemId } },
+    });
+    if (!itemRecord) throw new Error('Item not found');
+
+    const userItem = await this.prisma.userItem.findUnique({
+      where: { userId_itemId: { userId, itemId: itemRecord.id } },
+    });
+
+    const currentStatus = userItem?.status || 'PLAN_TO_WATCH';
+    const currentIsLiked = userItem?.isLiked || false;
+    const currentRating = userItem?.rating || null;
+
+    let newStatus = currentStatus;
+    let newIsLiked = currentIsLiked;
+    let newRating = currentRating;
+
+    if (action === 'watch') {
+      newStatus = currentStatus === 'COMPLETED' ? 'PLAN_TO_WATCH' : 'COMPLETED';
+    } else if (action === 'like') {
+      newIsLiked = !currentIsLiked;
+    } else if (action === 'rate') {
+      newRating = payload?.rating || null;
+    }
+
+    await this.prisma.userItem.upsert({
+      where: { userId_itemId: { userId, itemId: itemRecord.id } },
+      update: { status: newStatus, isLiked: newIsLiked, rating: newRating },
+      create: { userId, itemId: itemRecord.id, status: newStatus, isLiked: newIsLiked, rating: newRating },
+    });
+
+    return { status: newStatus, isLiked: newIsLiked, rating: newRating };
+  }
+
+  async getItemStats(itemId: string, type: string) {
+    const itemRecord = await this.prisma.item.findUnique({
+      where: { type_externalId: { type, externalId: itemId } },
+    });
+    if (!itemRecord) {
+       return { watched: 0, likes: 0, averageRating: 0 };
+    }
+    const stats = await this.prisma.userItem.aggregate({
+      where: { itemId: itemRecord.id },
+      _avg: { rating: true }
+    });
+    const likes = await this.prisma.userItem.count({ where: { itemId: itemRecord.id, isLiked: true }});
+    const watched = await this.prisma.userItem.count({ where: { itemId: itemRecord.id, status: 'COMPLETED' }});
+
+    return {
+      watched,
+      likes,
+      averageRating: stats._avg.rating || 0
+    };
+  }
 
   async getMovies() {
     const cacheKey = 'movies_popular';
@@ -139,6 +202,8 @@ export class ContentService {
     const item = await this.tmdbService.getMovieDetails(numericId);
     if (!item) return null;
 
+    const dbStats = await this.getItemStats(`m_${item.id}`, 'MOVIE');
+
     const mapped = {
       id: `m_${item.id}`,
       title: item.title,
@@ -170,17 +235,22 @@ export class ContentService {
       countries: item.production_countries?.map((c: any) => c.name) || [],
       languages: item.spoken_languages?.map((l: any) => l.english_name) || [],
       videos: item.videos?.results?.filter((v: any) => v.site === 'YouTube' && v.type === 'Trailer') || [],
+      imdbId: item.imdb_id || null,
       watchProviders: item['watch/providers']?.results?.US?.flatrate?.map((p: any) => ({
         provider_id: p.provider_id,
         provider_name: p.provider_name,
         logo_path: `https://image.tmdb.org/t/p/w200${p.logo_path}`,
       })) || [],
       stats: {
-        views: Math.floor(item.popularity * 1000),
-        likes: item.vote_count,
-        rank: Math.floor(10000 / (item.vote_average + 0.1)),
+        views: dbStats.watched,
+        likes: dbStats.likes,
+        rank: dbStats.averageRating > 0 ? Math.floor(dbStats.averageRating * 10) : 0,
       }
     };
+
+    if (dbStats.averageRating > 0) {
+      mapped.rating = dbStats.averageRating;
+    }
 
     await this.cacheManager.set(cacheKey, mapped, 3600000);
     return mapped;
