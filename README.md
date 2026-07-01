@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Frontend-Next.js_16-black?logo=nextdotjs" alt="Next.js" />
   <img src="https://img.shields.io/badge/Backend-NestJS_11-e0234e?logo=nestjs" alt="NestJS" />
-  <img src="https://img.shields.io/badge/Database-Prisma_+_SQLite-2d3748?logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/Database-Prisma_+_PostgreSQL_(Hetzner)-2d3748?logo=prisma" alt="Prisma" />
   <img src="https://img.shields.io/badge/Language-TypeScript-3178c6?logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Styling-Tailwind_CSS_4-38bdf8?logo=tailwindcss" alt="Tailwind" />
   <img src="https://img.shields.io/badge/License-Private-red" alt="License" />
@@ -101,7 +101,7 @@ Development follows a modular, iterative path. **Movies** category is built firs
 - [x] Project structure & tooling
 
 ### Phase 2 ✅ — Database & API Layer
-- [x] Prisma ORM setup with SQLite (→ PostgreSQL in production)
+- [x] Prisma ORM setup with PostgreSQL (Hetzner/Coolify)
 - [x] Database models: `User`, `Item`, `UserItem`
 - [x] PrismaService integration with NestJS
 - [x] FREE / PRO user tier system
@@ -118,16 +118,17 @@ Development follows a modular, iterative path. **Movies** category is built firs
 - [x] CTA sections
 
 ### Phase 4 🔜 — External API Integration
-- [ ] TMDB API integration (Movies, Series)
+- [x] TMDB API integration (Movies completed, original links/data acquired)
 - [ ] Anime API integration (Jikan / AniList)
 - [ ] Google Books API integration
 - [ ] API response caching layer (prevent rate limit issues)
 - [ ] Replace mock data with real content
 
 ### Phase 5 — Authentication & User System
-- [ ] User registration & login (email/password)
+- [x] User registration & login (email/password)
+- [x] Resend integration for transactional emails
 - [ ] Social authentication (Google, Discord, Apple)
-- [ ] JWT token-based session management
+- [x] JWT token-based session management
 - [ ] User profile pages (avatar, bio, social links)
 - [ ] FREE vs PRO tier enforcement
 
@@ -188,8 +189,7 @@ Development follows a modular, iterative path. **Movies** category is built firs
 - [ ] Affiliate link integration
 
 ### Phase 13 — Production Deployment
-- [ ] Hetzner server setup
-- [ ] PostgreSQL database migration (from SQLite)
+- [x] PostgreSQL database migration & Hetzner/Coolify setup
 - [ ] Domain & SSL configuration
 - [ ] CI/CD pipeline (auto-deploy on push)
 - [ ] CDN for static assets & images
@@ -287,8 +287,9 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 | Icons        | Lucide React                  | Modern icon library              |
 | Backend      | NestJS 11                     | REST API, business logic         |
 | ORM          | Prisma                        | Type-safe database access        |
-| Database     | SQLite (dev) → PostgreSQL (prod) | Data persistence              |
-| Hosting      | Hetzner (planned)             | Production server                |
+| Database     | PostgreSQL (Hetzner/Coolify) | Data persistence              |
+| Email        | Resend                        | Transactional Emails             |
+| Hosting      | Hetzner (Coolify)             | Production server                |
 | Version Control | Git + GitHub               | Code management & collaboration  |
 
 ---

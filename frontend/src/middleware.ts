@@ -14,18 +14,53 @@ export function middleware(req: NextRequest) {
     // Bunları istersen sonradan değiştirebiliriz.
     const [user, pwd] = atob(authValue).split(':');
 
-    if (user === 'durular' && pwd === 'defne') {
-      return NextResponse.next();
+    if (user !== 'durular' || pwd !== 'defne') {
+      return new NextResponse('Bu site şu anda yapım aşamasındadır. Giriş yetkisi gereklidir.', {
+        status: 401,
+        headers: {
+          'WWW-Authenticate': 'Basic realm="Secure Area"',
+        },
+      });
+    }
+  } else {
+    return new NextResponse('Bu site şu anda yapım aşamasındadır. Giriş yetkisi gereklidir.', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="Secure Area"',
+      },
+    });
+  }
+
+  // --- JWT & PROFILE COMPLETION CHECK ---
+  const token = req.cookies.get('token')?.value;
+
+  if (token) {
+    try {
+      const payloadBase64 = token.split('.')[1];
+      if (payloadBase64) {
+        const payloadJson = Buffer.from(payloadBase64, 'base64').toString('utf-8');
+        const payload = JSON.parse(payloadJson);
+        
+        const isProfileCompleted = payload.isProfileCompleted === true;
+        
+        if (!isProfileCompleted && 
+            !req.nextUrl.pathname.startsWith('/set-username') &&
+            !req.nextUrl.pathname.startsWith('/api') &&
+            !req.nextUrl.pathname.startsWith('/_next')
+        ) {
+          return NextResponse.redirect(new URL('/set-username', req.url));
+        }
+
+        if (isProfileCompleted && req.nextUrl.pathname.startsWith('/set-username')) {
+          return NextResponse.redirect(new URL('/', req.url));
+        }
+      }
+    } catch (e) {
+      // Ignored
     }
   }
 
-  // Şifre yanlışsa veya hiç girilmemişse giriş ekranı (pop-up) göster
-  return new NextResponse('Bu site şu anda yapım aşamasındadır. Giriş yetkisi gereklidir.', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Secure Area"',
-    },
-  });
+  return NextResponse.next();
 }
 
 // Hangi sayfalarda şifre sorulacağını belirliyoruz. (Görseller ve altyapı dosyaları hariç her yer)

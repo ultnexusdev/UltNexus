@@ -59,16 +59,17 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(data) {
-        const existingUser = await this.prisma.user.findFirst({
-            where: {
-                OR: [{ email: data.email }, { username: data.username }],
-            },
-        });
-        if (existingUser) {
-            if (existingUser.email === data.email) {
+        const existingUsers = await this.prisma.$queryRaw `
+      SELECT * FROM "User" 
+      WHERE LOWER(email) = LOWER(${data.email}) 
+         OR (username IS NOT NULL AND LOWER(username) = LOWER(${data.username}))
+    `;
+        if (existingUsers && existingUsers.length > 0) {
+            const existingUser = existingUsers[0];
+            if (existingUser.email.toLowerCase() === data.email.toLowerCase()) {
                 throw new common_1.BadRequestException('This email address is already in use.');
             }
-            if (existingUser.username === data.username) {
+            if (existingUser.username && data.username && existingUser.username.toLowerCase() === data.username.toLowerCase()) {
                 throw new common_1.BadRequestException('This username is already taken.');
             }
         }
@@ -81,10 +82,11 @@ let AuthService = class AuthService {
                 username: data.username,
                 password: hashedPassword,
                 verificationToken,
-                isVerified: true,
+                isVerified: false,
+                isProfileCompleted: true,
             },
         });
-        const confirmLink = `https://ultnexus.com/verify?token=${verificationToken}`;
+        const confirmLink = `http://localhost:3000/verify?token=${verificationToken}`;
         await this.mailService.sendVerificationEmail({ email: newUser.email, confirmLink });
         return {
             success: true,
@@ -92,17 +94,28 @@ let AuthService = class AuthService {
         };
     }
     async login(data) {
-        const user = await this.prisma.user.findUnique({
-            where: { email: data.email },
-        });
-        if (!user) {
+        const users = await this.prisma.$queryRaw `
+      SELECT * FROM "User" 
+      WHERE LOWER(email) = LOWER(${data.email}) 
+         OR (username IS NOT NULL AND LOWER(username) = LOWER(${data.email}))
+    `;
+        if (!users || users.length === 0) {
             throw new common_1.BadRequestException('AUTH.INVALID_CREDENTIALS');
+        }
+        const user = users[0];
+        if (!user.password) {
+            throw new common_1.BadRequestException('Please login using your social media account.');
         }
         const isPasswordValid = await bcrypt.compare(data.password, user.password);
         if (!isPasswordValid) {
             throw new common_1.BadRequestException('AUTH.INVALID_CREDENTIALS');
         }
-        const payload = { email: user.email, sub: user.id };
+        const payload = {
+            email: user.email,
+            sub: user.id,
+            role: user.role,
+            isVerified: user.isVerified
+        };
         const token = this.jwtService.sign(payload);
         return {
             success: true,
@@ -111,8 +124,112 @@ let AuthService = class AuthService {
                 id: user.id,
                 username: user.username,
                 email: user.email,
+                role: user.role,
+                isVerified: user.isVerified,
+                isProfileCompleted: user.isProfileCompleted
             },
         };
+    }
+    async verifyEmail(token) {
+        const user = await this.prisma.user.findFirst({
+            where: { verificationToken: token },
+        });
+        if (!user) {
+            throw new common_1.BadRequestException('Invalid or expired verification token.');
+        }
+        if (user.isVerified) {
+            throw new common_1.BadRequestException('Email is already verified.');
+        }
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: {
+                isVerified: true,
+                verificationToken: null,
+            },
+        });
+        return {
+            success: true,
+            message: 'Email successfully verified. You can now use all features.',
+        };
+    }
+    async forgotPassword(email) {
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return { success: true, message: 'If an account with that email exists, we sent a password reset link.' };
+        }
+        const resetToken = (0, crypto_1.randomBytes)(32).toString('hex');
+        const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { resetToken, resetTokenExpiry },
+        });
+        const resetLink = `https://ultnexus.com/reset-password?token=${resetToken}`;
+        await this.mailService.sendPasswordResetEmail({ email: user.email, resetLink });
+        return { success: true, message: 'If an account with that email exists, we sent a password reset link.' };
+    }
+    async resetPassword(token, newPassword) {
+        const user = await this.prisma.user.findFirst({
+            where: {
+                resetToken: token,
+                resetTokenExpiry: { gt: new Date() },
+            },
+        });
+        if (!user) {
+            throw new common_1.BadRequestException('Invalid or expired password reset token.');
+        }
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: {
+                password: hashedPassword,
+                resetToken: null,
+                resetTokenExpiry: null,
+            },
+        });
+        return { success: true, message: 'Password has been reset successfully. You can now log in.' };
+    }
+    async resendVerificationEmail(email) {
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found.');
+        }
+        if (user.isVerified) {
+            throw new common_1.BadRequestException('Email is already verified.');
+        }
+        const verificationToken = (0, crypto_1.randomBytes)(32).toString('hex');
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { verificationToken },
+        });
+        const confirmLink = `http://localhost:3000/verify?token=${verificationToken}`;
+        await this.mailService.sendVerificationEmail({ email: user.email, confirmLink });
+        return { success: true, message: 'Verification email has been resent.' };
+    }
+    async setUsername(userId, username) {
+        const existingUsers = await this.prisma.$queryRaw `
+      SELECT * FROM "User" 
+      WHERE username IS NOT NULL AND LOWER(username) = LOWER(${username})
+    `;
+        if (existingUsers && existingUsers.length > 0) {
+            throw new common_1.BadRequestException('This username is already taken.');
+        }
+        try {
+            await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    username: username,
+                    isProfileCompleted: true
+                }
+            });
+        }
+        catch (e) {
+            if (e.message && e.message.includes('check_username_format')) {
+                throw new common_1.BadRequestException('Invalid or forbidden username.');
+            }
+            throw e;
+        }
+        return { success: true, message: 'Username successfully set.' };
     }
 };
 exports.AuthService = AuthService;

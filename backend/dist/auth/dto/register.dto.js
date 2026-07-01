@@ -20,6 +20,9 @@ exports.RegisterDto = RegisterDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(3, { message: 'VALIDATION.USERNAME_MIN_LENGTH' }),
+    (0, class_validator_1.Matches)(/^[A-Za-z0-9_.]+$/, {
+        message: 'Username can only contain letters, numbers, underscores and dots',
+    }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "username", void 0);
 __decorate([

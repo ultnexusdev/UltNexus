@@ -53,6 +53,40 @@ let MailService = MailService_1 = class MailService {
             return { success: false, error: err };
         }
     }
+    async sendPasswordResetEmail({ email, resetLink }) {
+        try {
+            const { data, error } = await this.resend.emails.send({
+                from: 'UltNexus <noreply@ultnexus.com>',
+                to: [email],
+                subject: 'UltNexus - Reset Your Password',
+                html: `
+          <div style="background-color: #09090b; color: #fafafa; font-family: sans-serif; padding: 40px; border-radius: 16px; max-width: 600px; margin: 0 auto; border: 1px solid #27272a;">
+            <h2 style="color: #ef4444; margin-bottom: 20px;">Password Reset Request 🔐</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #a1a1aa;">
+              We received a request to reset the password for your UltNexus account. Click the button below to choose a new password. This link will expire in 1 hour.
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" style="background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+                Reset Password
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #71717a; margin-top: 40px;">
+              If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
+            </p>
+          </div>
+        `,
+            });
+            if (error) {
+                this.logger.error('Resend Mail Hatası (Şifre Sıfırlama):', error);
+                return { success: false, error };
+            }
+            return { success: true, data };
+        }
+        catch (err) {
+            this.logger.error('Şifre sıfırlama maili gönderilirken hata:', err);
+            return { success: false, error: err };
+        }
+    }
 };
 exports.MailService = MailService;
 exports.MailService = MailService = MailService_1 = __decorate([

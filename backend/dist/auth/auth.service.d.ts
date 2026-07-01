@@ -16,9 +16,32 @@ export declare class AuthService {
         success: boolean;
         token: string;
         user: {
-            id: string;
-            username: string;
-            email: string;
+            id: any;
+            username: any;
+            email: any;
+            role: any;
+            isVerified: any;
+            isProfileCompleted: any;
         };
+    }>;
+    verifyEmail(token: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    forgotPassword(email: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    resetPassword(token: string, newPassword: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    resendVerificationEmail(email: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    setUsername(userId: string, username: string): Promise<{
+        success: boolean;
+        message: string;
     }>;
 }

@@ -3,8 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 // ----------------------------------------------------------------------------
@@ -13,14 +18,18 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  username  String   @unique
+  username          String?  @unique
   email             String   @unique
-  password          String
+  password          String?
   isVerified        Boolean  @default(false)
+  isProfileCompleted Boolean @default(false)
   verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
   tier              String   @default("FREE") // FREE veya PRO üyelik tipi
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role              Role     @default(USER)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // İlişkiler
   items     UserItem[]

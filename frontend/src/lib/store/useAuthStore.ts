@@ -3,8 +3,9 @@ import { setAuthCookie, removeAuthCookie, getAuthCookie } from '../utils/cookies
 
 interface User {
   id: string;
-  username: string;
+  username: string | null;
   email: string;
+  isProfileCompleted: boolean;
 }
 
 interface AuthState {
@@ -15,6 +16,9 @@ interface AuthState {
   
   login: (data: any) => Promise<boolean>;
   register: (data: any) => Promise<boolean>;
+  forgotPassword: (email: string) => Promise<boolean>;
+  resetPassword: (data: any) => Promise<boolean>;
+  verifyEmail: (token: string) => Promise<boolean>;
   logout: () => void;
   clearError: () => void;
 }
@@ -73,6 +77,67 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // After successful register, usually we don't log them in automatically if verification is required.
       // For now, we just return true and let the UI handle success message.
+      set({ isLoading: false, error: null });
+      return true;
+    } catch (err) {
+      set({ error: 'AUTH.NETWORK_ERROR', isLoading: false });
+      return false;
+    }
+  },
+
+  forgotPassword: async (email) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        set({ error: data.message || 'Error', isLoading: false });
+        return false;
+      }
+      set({ isLoading: false, error: null });
+      return true;
+    } catch (err) {
+      set({ error: 'AUTH.NETWORK_ERROR', isLoading: false });
+      return false;
+    }
+  },
+
+  resetPassword: async (credentials) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        set({ error: data.message || 'Error', isLoading: false });
+        return false;
+      }
+      set({ isLoading: false, error: null });
+      return true;
+    } catch (err) {
+      set({ error: 'AUTH.NETWORK_ERROR', isLoading: false });
+      return false;
+    }
+  },
+
+  verifyEmail: async (token) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`${API_URL}/auth/verify?token=${token}`, {
+        method: 'GET',
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        set({ error: data.message || 'Error', isLoading: false });
+        return false;
+      }
       set({ isLoading: false, error: null });
       return true;
     } catch (err) {

@@ -15,5 +15,17 @@ export declare class MailService {
         error: any;
         data?: undefined;
     }>;
+    sendPasswordResetEmail({ email, resetLink }: {
+        email: string;
+        resetLink: string;
+    }): Promise<{
+        success: boolean;
+        data: import("resend").CreateEmailResponseSuccess;
+        error?: undefined;
+    } | {
+        success: boolean;
+        error: any;
+        data?: undefined;
+    }>;
 }
 export {};
